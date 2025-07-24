@@ -114,7 +114,6 @@
       }
     }
 
-    /* Modal overlay */
     .modal {
       display: none;
       position: fixed;
@@ -223,6 +222,15 @@
         return;
       }
 
+      const lastSubmit = localStorage.getItem("lastSubmit");
+      const now = Date.now();
+
+      if (lastSubmit && now - parseInt(lastSubmit) < 60000) {
+        const sisaDetik = Math.ceil((60000 - (now - parseInt(lastSubmit))) / 1000);
+        alert(`Tunggu ${sisaDetik} detik sebelum submit lagi`);
+        return;
+      }
+
       const totalQty = dataGorengan.reduce((sum, item) => {
         const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
         return sum + qty;
@@ -259,6 +267,7 @@
       })
       .then(res => res.json())
       .then(response => {
+        localStorage.setItem("lastSubmit", Date.now().toString());
         alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
         location.reload();
       })
