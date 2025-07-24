@@ -26,6 +26,7 @@
     .item img {
       width: 100px;
       margin-right: 15px;
+      border-radius: 10px;
     }
     .item-name {
       width: 150px;
@@ -62,21 +63,55 @@
 
   <script>
     const dataGorengan = [
-      "Risol Mayo", "Sosis Solo", "Risol Sayur", "Roti Goreng Sayur", 
-      "Martabak", "Pastel", "Roti Goreng Coklat", "Pisang Molen", "Dadar Gulung"
+      {
+        nama: "Risol Mayo",
+        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Mayo.jpg"
+      },
+      {
+        nama: "Sosis Solo",
+        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Sosis%20Solo.jpg"
+      },
+      {
+        nama: "Risol Sayur",
+        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Sayur.jpg"
+      },
+      {
+        nama: "Roti Goreng Sayur",
+        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Roti%20Goreng%20Sayur.jpg"
+      },
+      {
+        nama: "Martabak",
+        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Martabak.jpg"
+      },
+      {
+        nama: "Pastel",
+        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Pastel.jpg"
+      },
+      {
+        nama: "Roti Goreng Coklat",
+        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Roti%20Goreng%20Coklat.jpg"
+      },
+      {
+        nama: "Pisang Molen",
+        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Pisang%20molen.jpg"
+      },
+      {
+        nama: "Dadar Gulung",
+        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Dadar%20Gulung.jpg"
+      }
     ];
 
     const listContainer = document.getElementById('list-gorengan');
 
-    dataGorengan.forEach(nama => {
+    dataGorengan.forEach(item => {
       const div = document.createElement('div');
       div.className = 'item';
       div.innerHTML = `
-        <div class="item-name">${nama}</div>
-        <img src="https://via.placeholder.com/100?text=${encodeURIComponent(nama)}" alt="${nama}" />
-        <button onclick="updateQty('${nama}', -1)">-</button>
-        <input type="number" id="qty-${nama}" class="qty-input" value="0" min="0" />
-        <button onclick="updateQty('${nama}', 1)">+</button>
+        <div class="item-name">${item.nama}</div>
+        <img src="${item.img}" alt="${item.nama}" />
+        <button onclick="updateQty('${item.nama}', -1)">-</button>
+        <input type="number" id="qty-${item.nama}" class="qty-input" value="0" min="0" />
+        <button onclick="updateQty('${item.nama}', 1)">+</button>
       `;
       listContainer.appendChild(div);
     });
@@ -96,8 +131,8 @@
       }
 
       const gorengan = {};
-      dataGorengan.forEach(nama => {
-        gorengan[nama] = parseInt(document.getElementById(`qty-${nama}`).value) || 0;
+      dataGorengan.forEach(item => {
+        gorengan[item.nama] = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
       });
 
       fetch('https://script.google.com/macros/s/AKfycbxsrjw42Oq8khu670LgeXUrsyhALWzs5vqbzmVX1K_l-93cOj1POXSryURasOPRFDHO/exec', {
@@ -114,6 +149,28 @@
           console.error(err);
         });
     });
+
+    function cekJamOperasional() {
+      const now = new Date();
+      const jam = now.getHours();
+
+      if (jam >= 22 || jam < 6) {
+        document.getElementById('nama').disabled = true;
+        document.getElementById('submit').disabled = true;
+        document.getElementById('submit').innerText = 'Tutup, buka jam 06:00 pagi';
+
+        const inputs = document.querySelectorAll('.qty-input');
+        inputs.forEach(input => input.disabled = true);
+
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(btn => {
+          if (btn.id !== 'submit') btn.disabled = true;
+        });
+      }
+    }
+
+    // Panggil saat halaman dibuka
+    cekJamOperasional();
   </script>
 </body>
 </html>
