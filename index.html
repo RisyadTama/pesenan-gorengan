@@ -39,6 +39,12 @@
       height: 100px;
       object-fit: cover;
       border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .item img:hover {
+      transform: scale(1.05);
     }
 
     .item-info {
@@ -107,6 +113,36 @@
         justify-content: space-evenly;
       }
     }
+
+    /* Modal overlay */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 10px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 30px;
+      cursor: pointer;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -117,6 +153,12 @@
   <div id="gorengan-list"></div>
 
   <button id="submit">Submit Pesanan</button>
+
+  <!-- Modal Preview -->
+  <div class="modal" id="modal">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <img id="modal-img" src="" alt="Preview" />
+  </div>
 
   <script>
     const SHEETDB_API_URL = "https://sheetdb.io/api/v1/0c2tern02qzvl";
@@ -134,15 +176,15 @@
     ];
 
     const hargaGorengan = {
-      "Risol Mayo": 4000,
+      "Risol Mayo": 5000,
       "Sosis Solo": 4000,
-      "Risol Sayur": 3000,
-      "Roti Goreng Sayur": 3000,
-      "Martabak": 3000,
+      "Risol Sayur": 4500,
+      "Roti Goreng Sayur": 3500,
+      "Martabak": 8000,
       "Pastel": 3000,
-      "Roti Goreng Coklat": 3000,
-      "Pisang Molen": 3000,
-      "Dadar Gulung": 3000,
+      "Roti Goreng Coklat": 6000,
+      "Pisang Molen": 7000,
+      "Dadar Gulung": 6500,
     };
 
     const listContainer = document.getElementById("gorengan-list");
@@ -153,7 +195,7 @@
       div.innerHTML = `
         <div class="item-block">
           <div class="item-name">${item.nama}</div>
-          <img src="${item.img}" alt="${item.nama}" />
+          <img src="${item.img}" alt="${item.nama}" onclick="showModal('${item.img}')"/>
         </div>
         <div class="item-info">
           <div class="item-controls">
@@ -178,6 +220,16 @@
       const nama = document.getElementById("nama").value.trim();
       if (!nama) {
         alert("Nama wajib diisi");
+        return;
+      }
+
+      const totalQty = dataGorengan.reduce((sum, item) => {
+        const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
+        return sum + qty;
+      }, 0);
+
+      if (totalQty === 0) {
+        alert("Silakan pilih minimal 1 gorengan terlebih dahulu.");
         return;
       }
 
@@ -230,6 +282,23 @@
 
         const buttons = document.querySelectorAll('.item-controls button');
         buttons.forEach(btn => btn.disabled = true);
+      }
+    }
+
+    function showModal(src) {
+      document.getElementById("modal-img").src = src;
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+      document.getElementById("modal-img").src = "";
+    }
+
+    window.onclick = function(e) {
+      const modal = document.getElementById("modal");
+      if (e.target === modal) {
+        closeModal();
       }
     }
 
