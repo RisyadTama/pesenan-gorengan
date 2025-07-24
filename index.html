@@ -179,15 +179,19 @@
 
       fetch("https://script.google.com/macros/s/AKfycbxsrjw42Oq8khu670LgeXUrsyhALWzs5vqbzmVX1K_l-93cOj1POXSryURasOPRFDHO/exec", {
         method: "POST",
-        body: JSON.stringify({ nama: nama, pesanan: pesanan }),
+        body: JSON.stringify({ nama: nama, gorengan: pesanan.reduce((obj, item) => { obj[item.nama] = item.jumlah; return obj; }, {}) }),
         headers: {
           "Content-Type": "application/json",
         },
       })
-      .then(res => res.text())
+      .then(res => res.json())
       .then(response => {
-        alert("Pesanan berhasil dikirim!");
-        location.reload();
+        if (response.success) {
+          alert("Pesanan berhasil dikirim!");
+          location.reload();
+        } else {
+          alert("Gagal mengirim pesanan: " + (response.message || "Unknown error"));
+        }
       })
       .catch(err => {
         alert("Gagal mengirim pesanan.");
