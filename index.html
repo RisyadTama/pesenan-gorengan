@@ -168,24 +168,6 @@
       box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
 
-    /* Loading popup */
-    #loading-popup {
-      display: none;
-      position: fixed;
-      z-index: 10000;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.5);
-      color: white;
-      font-size: 24px;
-      font-weight: bold;
-      user-select: none;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
     @media (max-width: 600px) {
       .item {
         flex-direction: column;
@@ -216,9 +198,6 @@
       <img src="https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/WhatsApp%20Image%202025-07-24%20at%2013.44.50.jpeg" alt="Bayar Disini" />
     </div>
   </div>
-
-  <!-- Loading Popup -->
-  <div id="loading-popup">Memproses pesanan...</div>
 
   <script>
     const SHEETDB_API_URL = "https://sheetdb.io/api/v1/0c2tern02qzvl";
@@ -277,17 +256,12 @@
       input.value = value;
     }
 
-    const loadingPopup = document.getElementById('loading-popup');
-
     document.getElementById("submit").addEventListener("click", () => {
       const nama = document.getElementById("nama").value.trim();
       if (!nama) {
         alert("Nama wajib diisi");
         return;
       }
-
-      // Show loading popup
-      loadingPopup.style.display = "flex";
 
       let totalBelanja = 0;
 
@@ -315,14 +289,10 @@
       })
       .then(res => res.json())
       .then(response => {
-        loadingPopup.style.display = "none";
-        setTimeout(() => {
-          alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
-          location.reload();
-        }, 100);
+        alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
+        location.reload();
       })
       .catch(err => {
-        loadingPopup.style.display = "none";
         alert("Gagal mengirim pesanan.");
         console.error(err);
       });
