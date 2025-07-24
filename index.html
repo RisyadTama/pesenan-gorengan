@@ -231,7 +231,7 @@
     dataGorengan.forEach(item => {
       const div = document.createElement("div");
       div.className = "item";
-      div.innerHTML = 
+      div.innerHTML = `
         <div class="item-block">
           <div class="item-name">${item.nama}</div>
           <div class="item-price">Rp ${hargaGorengan[item.nama].toLocaleString()}</div>
@@ -244,12 +244,12 @@
             <button onclick="updateQty('${item.nama}', 1)">+</button>
           </div>
         </div>
-      ;
+      `;
       listContainer.appendChild(div);
     });
 
     function updateQty(nama, delta) {
-      const input = document.getElementById(qty-${nama});
+      const input = document.getElementById(`qty-${nama}`);
       let value = parseInt(input.value) || 0;
       value += delta;
       if (value < 0) value = 0;
@@ -266,7 +266,7 @@
       let totalBelanja = 0;
 
       const pesanan = dataGorengan.map(item => {
-        const qty = parseInt(document.getElementById(qty-${item.nama}).value) || 0;
+        const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
         totalBelanja += qty * hargaGorengan[item.nama];
         return { [item.nama]: qty };
       }).reduce((acc, cur) => Object.assign(acc, cur), {});
@@ -289,7 +289,7 @@
       })
       .then(res => res.json())
       .then(response => {
-        alert(Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()});
+        alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
         location.reload();
       })
       .catch(err => {
