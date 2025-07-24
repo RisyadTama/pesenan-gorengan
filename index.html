@@ -109,24 +109,63 @@
     }
 
     #bayar {
-      display: block;
-      margin: 25px auto 0;
-      text-align: center;
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+      background-color: #4caf50;
+      color: white;
       border: none;
-      background: none;
+      font-size: 18px;
+      border-radius: 8px;
       cursor: pointer;
-      text-decoration: none;
     }
 
-    #bayar img {
-      width: 180px;
+    #bayar:hover {
+      background-color: #45a049;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.75);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+
+    .modal-content img {
+      width: 100%;
       height: auto;
       border-radius: 10px;
-      transition: transform 0.2s ease;
+      display: block;
     }
 
-    #bayar img:hover {
-      transform: scale(1.05);
+    .modal-close {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: #fff;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 22px;
+      color: #333;
+      font-weight: bold;
+      text-align: center;
+      line-height: 30px;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
 
     @media (max-width: 600px) {
@@ -150,11 +189,15 @@
   <div id="gorengan-list"></div>
 
   <button id="submit">Submit Pesanan</button>
+  <button id="bayar">Bayar Disini</button>
 
-  <!-- Tombol Bayar di bawah Submit -->
-  <a id="bayar" href="https://linktr.ee/risyadtama" target="_blank">
-    <img src="https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/bayar-disini.jpg" alt="Bayar Disini" />
-  </a>
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="modal-close" id="modal-close">&times;</span>
+      <img src="https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/WhatsApp%20Image%202025-07-24%20at%2013.44.50.jpeg" alt="Bayar Disini" />
+    </div>
+  </div>
 
   <script>
     const SHEETDB_API_URL = "https://sheetdb.io/api/v1/0c2tern02qzvl";
@@ -255,6 +298,27 @@
       });
     });
 
+    // Modal control
+    const modal = document.getElementById('modal');
+    const modalCloseBtn = document.getElementById('modal-close');
+    const bayarBtn = document.getElementById('bayar');
+
+    bayarBtn.addEventListener('click', () => {
+      modal.style.display = 'flex';
+    });
+
+    modalCloseBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    // Close modal by clicking outside content
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // Jam operasional (misal tutup jam 22:00 sampai 06:00)
     function cekJamOperasional() {
       const now = new Date();
       const jam = now.getHours();
