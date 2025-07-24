@@ -1,3 +1,4 @@
+<!-- COPY DARI SINI -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -5,180 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gorengan Bang Bewok</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #fffaf0;
-      color: #333;
-      max-width: 600px;
-      margin: auto;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 20px;
-      box-sizing: border-box;
-    }
-
-    .item {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .item img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .item img:hover {
-      transform: scale(1.05);
-    }
-
-    .item-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .item-name {
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 5px;
-    }
-
-    .item-price {
-      text-align: center;
-      font-size: 14px;
-      color: #666;
-    }
-
-    .item-block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .item-controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .item-controls button,
-    .item-controls input {
-      height: 40px;
-      font-size: 16px;
-    }
-
-    .item-controls input {
-      width: 60px;
-      text-align: center;
-    }
-
-    #submit {
-      width: 100%;
-      padding: 15px;
-      background-color: #f57c00;
-      color: white;
-      border: none;
-      font-size: 18px;
-      border-radius: 8px;
-      margin-top: 30px;
-      cursor: pointer;
-    }
-
-    #submit:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
-    #bayar {
-      width: 100%;
-      padding: 15px;
-      margin-top: 20px;
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      font-size: 18px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    #bayar:hover {
-      background-color: #45a049;
-    }
-
-    /* Modal styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 9999;
-      left: 0;
-      top: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0,0,0,0.75);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      position: relative;
-      max-width: 90vw;
-      max-height: 90vh;
-    }
-
-    .modal-content img {
-      width: 100%;
-      height: auto;
-      border-radius: 10px;
-      display: block;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: -10px;
-      right: -10px;
-      background: #fff;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      font-size: 22px;
-      color: #333;
-      font-weight: bold;
-      text-align: center;
-      line-height: 30px;
-      cursor: pointer;
-      box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    }
-
-    @media (max-width: 600px) {
-      .item {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .item-controls {
-        width: 100%;
-        justify-content: space-evenly;
-      }
-    }
+    /* ... (style tidak berubah, tetap seperti versi terakhir kamu) ... */
   </style>
 </head>
 <body>
@@ -264,12 +92,19 @@
       }
 
       let totalBelanja = 0;
+      let totalQty = 0;
 
       const pesanan = dataGorengan.map(item => {
         const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
+        totalQty += qty;
         totalBelanja += qty * hargaGorengan[item.nama];
         return { [item.nama]: qty };
       }).reduce((acc, cur) => Object.assign(acc, cur), {});
+
+      if (totalQty === 0) {
+        alert("Belum ada pesanan yang dipilih");
+        return;
+      }
 
       const dataToSend = {
         data: [
@@ -298,7 +133,7 @@
       });
     });
 
-    // Modal Bayar control
+    // Modal Bayar
     const modal = document.getElementById('modal');
     const modalCloseBtn = document.getElementById('modal-close');
     const bayarBtn = document.getElementById('bayar');
@@ -311,14 +146,13 @@
       modal.style.display = 'none';
     });
 
-    // Close modal by clicking outside content
     window.addEventListener('click', (e) => {
       if (e.target === modal) {
         modal.style.display = 'none';
       }
     });
 
-    // Jam operasional (misal tutup jam 22:00 sampai 06:00)
+    // Jam operasional (tutup jam 22:00 - 06:00)
     function cekJamOperasional() {
       const now = new Date();
       const jam = now.getHours();
@@ -340,3 +174,4 @@
   </script>
 </body>
 </html>
+<!-- SAMPAI SINI -->
