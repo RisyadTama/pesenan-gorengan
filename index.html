@@ -133,6 +133,18 @@
       { nama: "Dadar Gulung", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Dadar%20Gulung.jpg" },
     ];
 
+    const hargaGorengan = {
+      "Risol Mayo": 5000,
+      "Sosis Solo": 4000,
+      "Risol Sayur": 4500,
+      "Roti Goreng Sayur": 3500,
+      "Martabak": 8000,
+      "Pastel": 3000,
+      "Roti Goreng Coklat": 6000,
+      "Pisang Molen": 7000,
+      "Dadar Gulung": 6500,
+    };
+
     const listContainer = document.getElementById("gorengan-list");
 
     dataGorengan.forEach(item => {
@@ -169,15 +181,18 @@
         return;
       }
 
+      let totalBelanja = 0;
+
       const pesanan = dataGorengan.map(item => {
         const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
+        totalBelanja += qty * hargaGorengan[item.nama];
         return { [item.nama]: qty };
       }).reduce((acc, cur) => Object.assign(acc, cur), {});
 
       const dataToSend = {
         data: [
           Object.assign(
-            { Timestamp: new Date().toLocaleString(), nama: nama },
+            { Timestamp: new Date().toLocaleString(), nama: nama, total_belanja: totalBelanja },
             pesanan
           )
         ]
@@ -192,7 +207,7 @@
       })
       .then(res => res.json())
       .then(response => {
-        alert("Pesanan berhasil dikirim!");
+        alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
         location.reload();
       })
       .catch(err => {
