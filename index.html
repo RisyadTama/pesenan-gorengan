@@ -315,15 +315,16 @@
       })
       .then(res => res.json())
       .then(response => {
-        alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
-        location.reload();
+        loadingPopup.style.display = "none";
+        setTimeout(() => {
+          alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
+          location.reload();
+        }, 100);
       })
       .catch(err => {
+        loadingPopup.style.display = "none";
         alert("Gagal mengirim pesanan.");
         console.error(err);
-      })
-      .finally(() => {
-        loadingPopup.style.display = "none";
       });
     });
 
