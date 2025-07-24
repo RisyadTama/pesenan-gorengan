@@ -115,6 +115,7 @@
       border: none;
       background: none;
       cursor: pointer;
+      text-decoration: none;
     }
 
     #bayar img {
@@ -151,9 +152,9 @@
   <button id="submit">Submit Pesanan</button>
 
   <!-- Tombol Bayar di bawah Submit -->
-  <button id="bayar" onclick="window.location.href='https://linktr.ee/risyadtama'">
+  <a id="bayar" href="https://linktr.ee/risyadtama" target="_blank">
     <img src="https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/bayar-disini.jpg" alt="Bayar Disini" />
-  </button>
+  </a>
 
   <script>
     const SHEETDB_API_URL = "https://sheetdb.io/api/v1/0c2tern02qzvl";
