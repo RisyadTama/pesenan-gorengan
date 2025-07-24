@@ -126,3 +126,152 @@
 
     #bayar img:hover {
       transform: scale(1.05);
+    }
+
+    @media (max-width: 600px) {
+      .item {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .item-controls {
+        width: 100%;
+        justify-content: space-evenly;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Gorengan Bang Bewok</h1>
+
+  <input type="text" id="nama" placeholder="Masukkan nama kamu" pattern="[A-Za-z\\s]+" title="Hanya huruf dan spasi saja" required />
+
+  <div id="gorengan-list"></div>
+
+  <button id="submit">Submit Pesanan</button>
+
+  <!-- Tombol Bayar di bawah Submit -->
+  <button id="bayar" onclick="window.location.href='https://linktr.ee/risyadtama'">
+    <img src="https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/bayar-disini.jpg" alt="Bayar Disini" />
+  </button>
+
+  <script>
+    const SHEETDB_API_URL = "https://sheetdb.io/api/v1/0c2tern02qzvl";
+
+    const dataGorengan = [
+      { nama: "Risol Mayo", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Mayo.jpg" },
+      { nama: "Sosis Solo", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Sosis%20Solo.jpg" },
+      { nama: "Risol Sayur", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Sayur.jpg" },
+      { nama: "Roti Goreng Sayur", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Roti%20Goreng%20Sayur.jpg" },
+      { nama: "Martabak", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Martabak.jpg" },
+      { nama: "Pastel", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Pastel.jpg" },
+      { nama: "Roti Goreng Coklat", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Roti%20Goreng%20Coklat.jpg" },
+      { nama: "Pisang Molen", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Pisang%20molen.jpg" },
+      { nama: "Dadar Gulung", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Dadar%20Gulung.jpg" }
+    ];
+
+    const hargaGorengan = {
+      "Risol Mayo": 4000,
+      "Sosis Solo": 4000,
+      "Risol Sayur": 3000,
+      "Roti Goreng Sayur": 3000,
+      "Martabak": 3000,
+      "Pastel": 3000,
+      "Roti Goreng Coklat": 3000,
+      "Pisang Molen": 3000,
+      "Dadar Gulung": 3000
+    };
+
+    const listContainer = document.getElementById("gorengan-list");
+
+    dataGorengan.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="item-block">
+          <div class="item-name">${item.nama}</div>
+          <div class="item-price">Rp ${hargaGorengan[item.nama].toLocaleString()}</div>
+          <img src="${item.img}" alt="${item.nama}" />
+        </div>
+        <div class="item-info">
+          <div class="item-controls">
+            <button onclick="updateQty('${item.nama}', -1)">-</button>
+            <input type="number" id="qty-${item.nama}" value="0" min="0" />
+            <button onclick="updateQty('${item.nama}', 1)">+</button>
+          </div>
+        </div>
+      `;
+      listContainer.appendChild(div);
+    });
+
+    function updateQty(nama, delta) {
+      const input = document.getElementById(`qty-${nama}`);
+      let value = parseInt(input.value) || 0;
+      value += delta;
+      if (value < 0) value = 0;
+      input.value = value;
+    }
+
+    document.getElementById("submit").addEventListener("click", () => {
+      const nama = document.getElementById("nama").value.trim();
+      if (!nama) {
+        alert("Nama wajib diisi");
+        return;
+      }
+
+      let totalBelanja = 0;
+
+      const pesanan = dataGorengan.map(item => {
+        const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
+        totalBelanja += qty * hargaGorengan[item.nama];
+        return { [item.nama]: qty };
+      }).reduce((acc, cur) => Object.assign(acc, cur), {});
+
+      const dataToSend = {
+        data: [
+          Object.assign(
+            { Timestamp: new Date().toLocaleString(), Nama: nama, total_belanja: totalBelanja },
+            pesanan
+          )
+        ]
+      };
+
+      fetch(SHEETDB_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dataToSend)
+      })
+      .then(res => res.json())
+      .then(response => {
+        alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
+        location.reload();
+      })
+      .catch(err => {
+        alert("Gagal mengirim pesanan.");
+        console.error(err);
+      });
+    });
+
+    function cekJamOperasional() {
+      const now = new Date();
+      const jam = now.getHours();
+
+      if (jam >= 22 || jam < 6) {
+        document.getElementById('nama').disabled = true;
+        document.getElementById('submit').disabled = true;
+        document.getElementById('submit').innerText = 'Tutup, buka jam 06:00 pagi';
+
+        const inputs = document.querySelectorAll('input[type=number]');
+        inputs.forEach(input => input.disabled = true);
+
+        const buttons = document.querySelectorAll('.item-controls button');
+        buttons.forEach(btn => btn.disabled = true);
+      }
+    }
+
+    cekJamOperasional();
+  </script>
+</body>
+</html>
