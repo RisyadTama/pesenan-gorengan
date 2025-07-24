@@ -134,15 +134,15 @@
     ];
 
     const hargaGorengan = {
-      "Risol Mayo": 5000,
+      "Risol Mayo": 4000,
       "Sosis Solo": 4000,
-      "Risol Sayur": 4500,
-      "Roti Goreng Sayur": 3500,
-      "Martabak": 8000,
+      "Risol Sayur": 3000,
+      "Roti Goreng Sayur": 3000,
+      "Martabak": 3000,
       "Pastel": 3000,
-      "Roti Goreng Coklat": 6000,
-      "Pisang Molen": 7000,
-      "Dadar Gulung": 6500,
+      "Roti Goreng Coklat": 3000,
+      "Pisang Molen": 3000,
+      "Dadar Gulung": 3000,
     };
 
     const listContainer = document.getElementById("gorengan-list");
@@ -192,7 +192,7 @@
       const dataToSend = {
         data: [
           Object.assign(
-            { Timestamp: new Date().toLocaleString(), nama: nama, total_belanja: totalBelanja },
+            { Timestamp: new Date().toLocaleString(), Nama: nama, total_belanja: totalBelanja },
             pesanan
           )
         ]
