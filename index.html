@@ -177,7 +177,7 @@
         return;
       }
 
-      fetch("https://script.google.com/macros/s/AKfycbxsrjw42Oq8khu670LgeXUrsyhALWzs5vqbzmVX1K_l-93cOj1POXSryURasOPRFDHO/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbyiwjSORvHcvJmd8BH7QgICmEyCbsiGJm6Ajgclu3NhRJD6WmszdW-lUSvmQHnTxuSk/exec", {
         method: "POST",
         body: JSON.stringify({ nama: nama, gorengan: pesanan.reduce((obj, item) => { obj[item.nama] = item.jumlah; return obj; }, {}) }),
         headers: {
