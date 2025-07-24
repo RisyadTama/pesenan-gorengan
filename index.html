@@ -8,189 +8,183 @@
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 800px;
+      background-color: #fffaf0;
+      color: #333;
+      max-width: 600px;
       margin: auto;
-      background: #fffbe7;
     }
-    h1 { text-align: center; }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
     input[type="text"] {
-      padding: 10px;
       width: 100%;
-      margin-bottom: 20px;
+      padding: 10px;
       font-size: 16px;
+      margin-bottom: 20px;
       box-sizing: border-box;
     }
 
     .item {
       display: flex;
-      align-items: center;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      gap: 15px;
     }
 
     .item img {
       width: 100px;
-      margin-right: 15px;
+      height: 100px;
+      object-fit: cover;
       border-radius: 10px;
+    }
+
+    .item-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .item-name {
-      width: 150px;
       font-weight: bold;
-      margin-bottom: 10px;
     }
 
-    .qty-input {
+    .item-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .item-controls button,
+    .item-controls input {
+      height: 40px;
+      font-size: 16px;
+    }
+
+    .item-controls input {
       width: 60px;
       text-align: center;
-      font-size: 16px;
     }
 
-    button {
-      padding: 5px 10px;
-      font-size: 16px;
-      margin: 0 5px;
-    }
-
-    #submit {
+    button#submit {
       width: 100%;
       padding: 15px;
-      font-size: 18px;
-      margin-top: 30px;
-      background-color: #ffc107;
+      background-color: #f57c00;
+      color: white;
       border: none;
-      border-radius: 10px;
+      font-size: 18px;
+      border-radius: 8px;
+      margin-top: 30px;
       cursor: pointer;
     }
 
-    /* Responsif untuk HP */
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
     @media (max-width: 600px) {
       .item {
         flex-direction: column;
         align-items: flex-start;
       }
 
-      .item-name {
+      .item-controls {
         width: 100%;
-        margin-bottom: 5px;
+        justify-content: space-between;
       }
 
-      .item img {
-        margin: 0 0 10px 0;
-      }
-
-      button {
-        font-size: 18px;
-      }
-
-      .qty-input {
-        font-size: 18px;
-        width: 70px;
-      }
-
-      #submit {
-        font-size: 20px;
-        padding: 18px;
+      .item-controls input {
+        flex-shrink: 0;
       }
     }
   </style>
 </head>
 <body>
   <h1>Gorengan Bang Bewok</h1>
-  <input type="text" id="nama" placeholder="Masukkan Nama Anda (huruf saja)" pattern="[A-Za-z\s]+" required />
 
-  <div id="list-gorengan"></div>
+  <input type="text" id="nama" placeholder="Masukkan nama kamu" pattern="[A-Za-z\s]+" title="Hanya huruf dan spasi saja" required />
+
+  <div id="gorengan-list"></div>
 
   <button id="submit">Submit Pesanan</button>
 
   <script>
     const dataGorengan = [
-      {
-        nama: "Risol Mayo",
-        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Mayo.jpg"
-      },
-      {
-        nama: "Sosis Solo",
-        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Sosis%20Solo.jpg"
-      },
-      {
-        nama: "Risol Sayur",
-        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Sayur.jpg"
-      },
-      {
-        nama: "Roti Goreng Sayur",
-        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Roti%20Goreng%20Sayur.jpg"
-      },
-      {
-        nama: "Martabak",
-        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Martabak.jpg"
-      },
-      {
-        nama: "Pastel",
-        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Pastel.jpg"
-      },
-      {
-        nama: "Roti Goreng Coklat",
-        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Roti%20Goreng%20Coklat.jpg"
-      },
-      {
-        nama: "Pisang Molen",
-        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Pisang%20molen.jpg"
-      },
-      {
-        nama: "Dadar Gulung",
-        img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Dadar%20Gulung.jpg"
-      }
+      { nama: "Risol Mayo", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Mayo.jpg" },
+      { nama: "Sosis Solo", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Sosis%20Solo.jpg" },
+      { nama: "Risol Sayur", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Sayur.jpg" },
+      { nama: "Roti Goreng Sayur", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Roti%20Goreng%20Sayur.jpg" },
+      { nama: "Martabak", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Martabak.jpg" },
+      { nama: "Pastel", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Pastel.jpg" },
+      { nama: "Roti Goreng Coklat", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Roti%20Goreng%20Coklat.jpg" },
+      { nama: "Pisang Molen", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Pisang%20molen.jpg" },
+      { nama: "Dadar Gulung", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Dadar%20Gulung.jpg" },
     ];
 
-    const listContainer = document.getElementById('list-gorengan');
+    const listContainer = document.getElementById("gorengan-list");
 
     dataGorengan.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'item';
+      const div = document.createElement("div");
+      div.className = "item";
       div.innerHTML = `
-        <div class="item-name">${item.nama}</div>
         <img src="${item.img}" alt="${item.nama}" />
-        <button onclick="updateQty('${item.nama}', -1)">-</button>
-        <input type="number" id="qty-${item.nama}" class="qty-input" value="0" min="0" />
-        <button onclick="updateQty('${item.nama}', 1)">+</button>
+        <div class="item-info">
+          <div class="item-name">${item.nama}</div>
+          <div class="item-controls">
+            <button onclick="updateQty('${item.nama}', -1)">-</button>
+            <input type="number" id="qty-${item.nama}" value="0" min="0" />
+            <button onclick="updateQty('${item.nama}', 1)">+</button>
+          </div>
+        </div>
       `;
       listContainer.appendChild(div);
     });
 
     function updateQty(nama, delta) {
       const input = document.getElementById(`qty-${nama}`);
-      let val = parseInt(input.value) || 0;
-      val = Math.max(0, val + delta);
-      input.value = val;
+      let value = parseInt(input.value) || 0;
+      value += delta;
+      if (value < 0) value = 0;
+      input.value = value;
     }
 
-    document.getElementById('submit').addEventListener('click', () => {
-      const nama = document.getElementById('nama').value.trim();
-      if (!/^[A-Za-z\s]+$/.test(nama)) {
-        alert('Nama hanya boleh berisi huruf');
+    document.getElementById("submit").addEventListener("click", () => {
+      const nama = document.getElementById("nama").value.trim();
+      if (!nama) {
+        alert("Nama wajib diisi");
         return;
       }
 
-      const gorengan = {};
-      dataGorengan.forEach(item => {
-        gorengan[item.nama] = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
-      });
+      const pesanan = dataGorengan.map(item => {
+        const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
+        return { nama: item.nama, jumlah: qty };
+      }).filter(p => p.jumlah > 0);
 
-      fetch('https://script.google.com/macros/s/AKfycbxsrjw42Oq8khu670LgeXUrsyhALWzs5vqbzmVX1K_l-93cOj1POXSryURasOPRFDHO/exec', {
-        method: 'POST',
-        body: JSON.stringify({ nama, gorengan }),
+      if (pesanan.length === 0) {
+        alert("Isi minimal satu pesanan gorengan.");
+        return;
+      }
+
+      fetch("https://script.google.com/macros/s/AKfycbxsrjw42Oq8khu670LgeXUrsyhALWzs5vqbzmVX1K_l-93cOj1POXSryURasOPRFDHO/exec", {
+        method: "POST",
+        body: JSON.stringify({ nama: nama, pesanan: pesanan }),
         headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(res => res.json())
-        .then(data => {
-          alert("Pesanan berhasil dikirim!");
-        }).catch(err => {
-          alert("Gagal mengirim pesanan.");
-          console.error(err);
-        });
+          "Content-Type": "application/json",
+        },
+      })
+      .then(res => res.text())
+      .then(response => {
+        alert("Pesanan berhasil dikirim!");
+        location.reload();
+      })
+      .catch(err => {
+        alert("Gagal mengirim pesanan.");
+        console.error(err);
+      });
     });
 
     function cekJamOperasional() {
@@ -202,13 +196,11 @@
         document.getElementById('submit').disabled = true;
         document.getElementById('submit').innerText = 'Tutup, buka jam 06:00 pagi';
 
-        const inputs = document.querySelectorAll('.qty-input');
+        const inputs = document.querySelectorAll('input[type=number]');
         inputs.forEach(input => input.disabled = true);
 
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(btn => {
-          if (btn.id !== 'submit') btn.disabled = true;
-        });
+        const buttons = document.querySelectorAll('.item-controls button');
+        buttons.forEach(btn => btn.disabled = true);
       }
     }
 
