@@ -29,9 +29,9 @@
 
     .item {
       display: flex;
-      align-items: flex-start;
-      margin-bottom: 20px;
+      align-items: center;
       gap: 15px;
+      margin-bottom: 25px;
     }
 
     .item img {
@@ -45,15 +45,25 @@
       flex: 1;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       gap: 8px;
     }
 
     .item-name {
       font-weight: bold;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+
+    .item-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .item-controls {
       display: flex;
+      justify-content: center;
       align-items: center;
       gap: 10px;
     }
@@ -69,7 +79,7 @@
       text-align: center;
     }
 
-    button#submit {
+    #submit {
       width: 100%;
       padding: 15px;
       background-color: #f57c00;
@@ -81,7 +91,7 @@
       cursor: pointer;
     }
 
-    button:disabled {
+    #submit:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
@@ -89,16 +99,12 @@
     @media (max-width: 600px) {
       .item {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
       }
 
       .item-controls {
         width: 100%;
-        justify-content: space-between;
-      }
-
-      .item-controls input {
-        flex-shrink: 0;
+        justify-content: space-evenly;
       }
     }
   </style>
@@ -131,9 +137,11 @@
       const div = document.createElement("div");
       div.className = "item";
       div.innerHTML = `
-        <img src="${item.img}" alt="${item.nama}" />
-        <div class="item-info">
+        <div class="item-block">
           <div class="item-name">${item.nama}</div>
+          <img src="${item.img}" alt="${item.nama}" />
+        </div>
+        <div class="item-info">
           <div class="item-controls">
             <button onclick="updateQty('${item.nama}', -1)">-</button>
             <input type="number" id="qty-${item.nama}" value="0" min="0" />
