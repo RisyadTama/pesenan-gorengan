@@ -13,12 +13,10 @@
       max-width: 600px;
       margin: auto;
     }
-
     h1 {
       text-align: center;
       margin-bottom: 30px;
     }
-
     input[type="text"] {
       width: 100%;
       padding: 10px;
@@ -26,14 +24,12 @@
       margin-bottom: 20px;
       box-sizing: border-box;
     }
-
     .item {
       display: flex;
       align-items: center;
       gap: 15px;
       margin-bottom: 25px;
     }
-
     .item img {
       width: 100px;
       height: 100px;
@@ -42,11 +38,9 @@
       cursor: pointer;
       transition: transform 0.2s ease;
     }
-
     .item img:hover {
       transform: scale(1.05);
     }
-
     .item-info {
       flex: 1;
       display: flex;
@@ -54,43 +48,36 @@
       justify-content: center;
       gap: 8px;
     }
-
     .item-name {
       font-weight: bold;
       text-align: center;
       margin-bottom: 5px;
     }
-
     .item-price {
       text-align: center;
       font-size: 14px;
       color: #666;
     }
-
     .item-block {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-
     .item-controls {
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
     }
-
     .item-controls button,
     .item-controls input {
       height: 40px;
       font-size: 16px;
     }
-
     .item-controls input {
       width: 60px;
       text-align: center;
     }
-
     #submit, #bayar {
       width: 100%;
       padding: 15px;
@@ -99,28 +86,23 @@
       border-radius: 8px;
       cursor: pointer;
     }
-
     #submit {
       background-color: #f57c00;
       color: white;
       margin-top: 30px;
     }
-
     #submit:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
-
     #bayar {
       margin-top: 20px;
       background-color: #4caf50;
       color: white;
     }
-
     #bayar:hover {
       background-color: #45a049;
     }
-
     .modal {
       display: none;
       position: fixed;
@@ -133,20 +115,17 @@
       justify-content: center;
       align-items: center;
     }
-
     .modal-content {
       position: relative;
       max-width: 90vw;
       max-height: 90vh;
     }
-
     .modal-content img {
       width: 100%;
       height: auto;
       border-radius: 10px;
       display: block;
     }
-
     .modal-close {
       position: absolute;
       top: -10px;
@@ -163,13 +142,11 @@
       cursor: pointer;
       box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
-
     @media (max-width: 600px) {
       .item {
         flex-direction: column;
         align-items: center;
       }
-
       .item-controls {
         width: 100%;
         justify-content: space-evenly;
@@ -179,15 +156,12 @@
 </head>
 <body>
   <h1>Gorengan Bang Bewok</h1>
-
   <input type="text" id="nama" placeholder="Masukkan nama kamu" pattern="[A-Za-z\s]+" title="Hanya huruf dan spasi saja" required />
-
   <div id="gorengan-list"></div>
-
   <button id="submit">Submit Pesanan</button>
   <button id="bayar">Bayar Disini</button>
 
-  <!-- Modal Bayar -->
+  <!-- Modal Pembayaran -->
   <div class="modal" id="modal">
     <div class="modal-content">
       <span class="modal-close" id="modal-close">&times;</span>
@@ -207,7 +181,6 @@
 
   <script>
     const SHEETDB_API_URL = "https://sheetdb.io/api/v1/0c2tern02qzvl";
-
     const dataGorengan = [
       { nama: "Risol Mayo", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Mayo.jpg" },
       { nama: "Sosis Solo", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Sosis%20Solo.jpg" },
@@ -219,21 +192,11 @@
       { nama: "Pisang Molen", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Pisang%20molen.jpg" },
       { nama: "Dadar Gulung", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Dadar%20Gulung.jpg" }
     ];
-
     const hargaGorengan = {
-      "Risol Mayo": 4000,
-      "Sosis Solo": 4000,
-      "Risol Sayur": 3000,
-      "Roti Goreng Sayur": 3000,
-      "Martabak": 3000,
-      "Pastel": 3000,
-      "Roti Goreng Coklat": 3000,
-      "Pisang Molen": 3000,
-      "Dadar Gulung": 3000
+      "Risol Mayo": 4000, "Sosis Solo": 4000, "Risol Sayur": 3000, "Roti Goreng Sayur": 3000,
+      "Martabak": 3000, "Pastel": 3000, "Roti Goreng Coklat": 3000, "Pisang Molen": 3000, "Dadar Gulung": 3000
     };
-
     const listContainer = document.getElementById("gorengan-list");
-
     dataGorengan.forEach(item => {
       const div = document.createElement("div");
       div.className = "item";
@@ -262,17 +225,30 @@
       input.value = value;
     }
 
+    // Membesarkan gambar saat diklik
+    document.querySelectorAll("#gorengan-list img").forEach(img => {
+      img.addEventListener("click", () => {
+        const modal = document.createElement("div");
+        modal.className = "modal";
+        modal.style.display = "flex";
+        modal.innerHTML = `
+          <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <img src="${img.src}" alt="${img.alt}" style="max-width: 90vw; max-height: 90vh; border-radius: 10px; display: block;" />
+          </div>
+        `;
+        document.body.appendChild(modal);
+        modal.querySelector(".modal-close").onclick = () => modal.remove();
+        modal.addEventListener("click", (e) => { if (e.target === modal) modal.remove(); });
+      });
+    });
+
+    let isSubmitting = false;
     document.getElementById("submit").addEventListener("click", () => {
+      if (isSubmitting) return;
       const nama = document.getElementById("nama").value.trim();
-      if (!nama) {
-        alert("Nama wajib diisi");
-        return;
-      }
-
-      let totalBelanja = 0;
-      let pesanan = {};
-      let detailPesanan = "";
-
+      if (!nama) { alert("Nama wajib diisi"); return; }
+      let totalBelanja = 0, pesanan = {}, detailPesanan = "";
       dataGorengan.forEach(item => {
         const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
         if (qty > 0) {
@@ -281,87 +257,43 @@
           detailPesanan += `${item.nama}: ${qty} x Rp ${hargaGorengan[item.nama].toLocaleString()} = Rp ${(qty * hargaGorengan[item.nama]).toLocaleString()}\n`;
         }
       });
-
-      if (totalBelanja === 0) {
-        alert("Belum ada pesanan yang dipilih.");
-        return;
-      }
-
+      if (totalBelanja === 0) { alert("Belum ada pesanan yang dipilih."); return; }
       document.getElementById("konfirmasi-detail").innerText = `Nama: ${nama}\n\n${detailPesanan}\nTotal: Rp ${totalBelanja.toLocaleString()}`;
       document.getElementById("modal-konfirmasi").style.display = "flex";
-
       document.getElementById("konfirmasi-pesan").onclick = function() {
-        const dataToSend = {
-          data: [
-            Object.assign(
-              { Timestamp: new Date().toLocaleString(), Nama: nama, total_belanja: totalBelanja },
-              pesanan
-            )
-          ]
-        };
-
-        fetch(SHEETDB_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(dataToSend)
-        })
+        if (isSubmitting) return;
+        isSubmitting = true;
+        this.disabled = true;
+        this.innerText = "Mengirim...";
+        const dataToSend = { data: [ Object.assign({ Timestamp: new Date().toLocaleString(), Nama: nama, total_belanja: totalBelanja }, pesanan) ] };
+        fetch(SHEETDB_API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(dataToSend) })
         .then(res => res.json())
-        .then(response => {
-          alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
-          location.reload();
-        })
+        .then(response => { alert(`Pesanan berhasil dikirim! Total belanja: Rp ${totalBelanja.toLocaleString()}`); location.reload(); })
         .catch(err => {
           alert("Gagal mengirim pesanan. Coba ulangi.");
           console.error(err);
+          isSubmitting = false;
+          document.getElementById("konfirmasi-pesan").disabled = false;
+          document.getElementById("konfirmasi-pesan").innerText = "Konfirmasi Pesanan";
         });
       }
     });
 
-    document.getElementById("konfirmasi-close").onclick = function() {
-      document.getElementById("modal-konfirmasi").style.display = "none";
-    }
-
-    window.addEventListener("click", (e) => {
-      if (e.target === document.getElementById("modal-konfirmasi")) {
-        document.getElementById("modal-konfirmasi").style.display = "none";
-      }
-    });
-
-    const modal = document.getElementById('modal');
-    const modalCloseBtn = document.getElementById('modal-close');
-    const bayarBtn = document.getElementById('bayar');
-
-    bayarBtn.addEventListener('click', () => {
-      modal.style.display = 'flex';
-    });
-
-    modalCloseBtn.addEventListener('click', () => {
-      modal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.style.display = 'none';
-      }
-    });
-
+    document.getElementById("konfirmasi-close").onclick = () => document.getElementById("modal-konfirmasi").style.display = "none";
+    window.addEventListener("click", (e) => { if (e.target === document.getElementById("modal-konfirmasi")) document.getElementById("modal-konfirmasi").style.display = "none"; });
+    document.getElementById("bayar").addEventListener('click', () => document.getElementById('modal').style.display = 'flex');
+    document.getElementById('modal-close').addEventListener('click', () => document.getElementById('modal').style.display = 'none');
+    window.addEventListener('click', (e) => { if (e.target === document.getElementById('modal')) document.getElementById('modal').style.display = 'none'; });
     function cekJamOperasional() {
-      const now = new Date();
-      const jam = now.getHours();
-
+      const jam = new Date().getHours();
       if (jam >= 22 || jam < 6) {
         document.getElementById('nama').disabled = true;
         document.getElementById('submit').disabled = true;
         document.getElementById('submit').innerText = 'Tutup, buka jam 06:00 pagi';
-
-        const inputs = document.querySelectorAll('input[type=number]');
-        inputs.forEach(input => input.disabled = true);
-
-        const buttons = document.querySelectorAll('.item-controls button');
-        buttons.forEach(btn => btn.disabled = true);
+        document.querySelectorAll('input[type=number]').forEach(input => input.disabled = true);
+        document.querySelectorAll('.item-controls button').forEach(btn => btn.disabled = true);
       }
     }
-
     cekJamOperasional();
   </script>
 </body>
