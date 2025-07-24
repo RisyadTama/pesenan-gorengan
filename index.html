@@ -119,6 +119,8 @@
   <button id="submit">Submit Pesanan</button>
 
   <script>
+    const SHEETDB_API_URL = "https://sheetdb.io/api/v1/0c2tern02qzvl";
+
     const dataGorengan = [
       { nama: "Risol Mayo", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Mayo.jpg" },
       { nama: "Sosis Solo", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Sosis%20Solo.jpg" },
@@ -169,29 +171,29 @@
 
       const pesanan = dataGorengan.map(item => {
         const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
-        return { nama: item.nama, jumlah: qty };
-      }).filter(p => p.jumlah > 0);
+        return { [item.nama]: qty };
+      }).reduce((acc, cur) => Object.assign(acc, cur), {});
 
-      if (pesanan.length === 0) {
-        alert("Isi minimal satu pesanan gorengan.");
-        return;
-      }
+      const dataToSend = {
+        data: [
+          Object.assign(
+            { Timestamp: new Date().toLocaleString(), nama: nama },
+            pesanan
+          )
+        ]
+      };
 
-      fetch("https://script.google.com/macros/s/AKfycbyiwjSORvHcvJmd8BH7QgICmEyCbsiGJm6Ajgclu3NhRJD6WmszdW-lUSvmQHnTxuSk/exec", {
+      fetch(SHEETDB_API_URL, {
         method: "POST",
-        body: JSON.stringify({ nama: nama, gorengan: pesanan.reduce((obj, item) => { obj[item.nama] = item.jumlah; return obj; }, {}) }),
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
+        body: JSON.stringify(dataToSend)
       })
       .then(res => res.json())
       .then(response => {
-        if (response.success) {
-          alert("Pesanan berhasil dikirim!");
-          location.reload();
-        } else {
-          alert("Gagal mengirim pesanan: " + (response.message || "Unknown error"));
-        }
+        alert("Pesanan berhasil dikirim!");
+        location.reload();
       })
       .catch(err => {
         alert("Gagal mengirim pesanan.");
