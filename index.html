@@ -61,6 +61,12 @@
       margin-bottom: 5px;
     }
 
+    .item-price {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+    }
+
     .item-block {
       display: flex;
       flex-direction: column;
@@ -102,216 +108,21 @@
       cursor: not-allowed;
     }
 
-    @media (max-width: 600px) {
-      .item {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .item-controls {
-        width: 100%;
-        justify-content: space-evenly;
-      }
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      left: 0;
-      top: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.85);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 10px;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      color: white;
-      font-size: 30px;
+    #bayar {
+      display: block;
+      margin: 25px auto 0;
+      text-align: center;
+      border: none;
+      background: none;
       cursor: pointer;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <h1>Gorengan Bang Bewok</h1>
-
-  <input type="text" id="nama" placeholder="Masukkan nama kamu" pattern="[A-Za-z\s]+" title="Hanya huruf dan spasi saja" required />
-
-  <div id="gorengan-list"></div>
-
-  <button id="submit">Submit Pesanan</button>
-
-  <!-- Modal Preview -->
-  <div class="modal" id="modal">
-    <span class="modal-close" onclick="closeModal()">&times;</span>
-    <img id="modal-img" src="" alt="Preview" />
-  </div>
-
-  <script>
-    const SHEETDB_API_URL = "https://sheetdb.io/api/v1/0c2tern02qzvl";
-
-    const dataGorengan = [
-      { nama: "Risol Mayo", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Mayo.jpg" },
-      { nama: "Sosis Solo", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Sosis%20Solo.jpg" },
-      { nama: "Risol Sayur", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Risol%20Sayur.jpg" },
-      { nama: "Roti Goreng Sayur", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Roti%20Goreng%20Sayur.jpg" },
-      { nama: "Martabak", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Martabak.jpg" },
-      { nama: "Pastel", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Pastel.jpg" },
-      { nama: "Roti Goreng Coklat", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Roti%20Goreng%20Coklat.jpg" },
-      { nama: "Pisang Molen", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Pisang%20molen.jpg" },
-      { nama: "Dadar Gulung", img: "https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/Dadar%20Gulung.jpg" },
-    ];
-
-    const hargaGorengan = {
-      "Risol Mayo": 5000,
-      "Sosis Solo": 4000,
-      "Risol Sayur": 4500,
-      "Roti Goreng Sayur": 3500,
-      "Martabak": 8000,
-      "Pastel": 3000,
-      "Roti Goreng Coklat": 6000,
-      "Pisang Molen": 7000,
-      "Dadar Gulung": 6500,
-    };
-
-    const listContainer = document.getElementById("gorengan-list");
-
-    dataGorengan.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = `
-        <div class="item-block">
-          <div class="item-name">${item.nama}</div>
-          <img src="${item.img}" alt="${item.nama}" onclick="showModal('${item.img}')"/>
-        </div>
-        <div class="item-info">
-          <div class="item-controls">
-            <button onclick="updateQty('${item.nama}', -1)">-</button>
-            <input type="number" id="qty-${item.nama}" value="0" min="0" />
-            <button onclick="updateQty('${item.nama}', 1)">+</button>
-          </div>
-        </div>
-      `;
-      listContainer.appendChild(div);
-    });
-
-    function updateQty(nama, delta) {
-      const input = document.getElementById(`qty-${nama}`);
-      let value = parseInt(input.value) || 0;
-      value += delta;
-      if (value < 0) value = 0;
-      input.value = value;
     }
 
-    document.getElementById("submit").addEventListener("click", () => {
-      const nama = document.getElementById("nama").value.trim();
-      if (!nama) {
-        alert("Nama wajib diisi");
-        return;
-      }
-
-      const lastSubmit = localStorage.getItem("lastSubmit");
-      const now = Date.now();
-
-      if (lastSubmit && now - parseInt(lastSubmit) < 60000) {
-        const sisaDetik = Math.ceil((60000 - (now - parseInt(lastSubmit))) / 1000);
-        alert(`Tunggu ${sisaDetik} detik sebelum submit lagi`);
-        return;
-      }
-
-      const totalQty = dataGorengan.reduce((sum, item) => {
-        const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
-        return sum + qty;
-      }, 0);
-
-      if (totalQty === 0) {
-        alert("Silakan pilih minimal 1 gorengan terlebih dahulu.");
-        return;
-      }
-
-      let totalBelanja = 0;
-
-      const pesanan = dataGorengan.map(item => {
-        const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
-        totalBelanja += qty * hargaGorengan[item.nama];
-        return { [item.nama]: qty };
-      }).reduce((acc, cur) => Object.assign(acc, cur), {});
-
-      const dataToSend = {
-        data: [
-          Object.assign(
-            { Timestamp: new Date().toLocaleString(), Nama: nama, total_belanja: totalBelanja },
-            pesanan
-          )
-        ]
-      };
-
-      fetch(SHEETDB_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(dataToSend)
-      })
-      .then(res => res.json())
-      .then(response => {
-        localStorage.setItem("lastSubmit", Date.now().toString());
-        alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
-        location.reload();
-      })
-      .catch(err => {
-        alert("Gagal mengirim pesanan.");
-        console.error(err);
-      });
-    });
-
-    function cekJamOperasional() {
-      const now = new Date();
-      const jam = now.getHours();
-
-      if (jam >= 22 || jam < 6) {
-        document.getElementById('nama').disabled = true;
-        document.getElementById('submit').disabled = true;
-        document.getElementById('submit').innerText = 'Tutup, buka jam 06:00 pagi';
-
-        const inputs = document.querySelectorAll('input[type=number]');
-        inputs.forEach(input => input.disabled = true);
-
-        const buttons = document.querySelectorAll('.item-controls button');
-        buttons.forEach(btn => btn.disabled = true);
-      }
+    #bayar img {
+      width: 180px;
+      height: auto;
+      border-radius: 10px;
+      transition: transform 0.2s ease;
     }
 
-    function showModal(src) {
-      document.getElementById("modal-img").src = src;
-      document.getElementById("modal").style.display = "flex";
-    }
-
-    function closeModal() {
-      document.getElementById("modal").style.display = "none";
-      document.getElementById("modal-img").src = "";
-    }
-
-    window.onclick = function(e) {
-      const modal = document.getElementById("modal");
-      if (e.target === modal) {
-        closeModal();
-      }
-    }
-
-    cekJamOperasional();
-  </script>
-</body>
-</html>
+    #bayar img:hover {
+      transform: scale(1.05);
