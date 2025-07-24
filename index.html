@@ -91,16 +91,19 @@
       text-align: center;
     }
 
-    #submit {
+    #submit, #bayar {
       width: 100%;
       padding: 15px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #submit {
       background-color: #f57c00;
       color: white;
-      border: none;
-      font-size: 18px;
-      border-radius: 8px;
       margin-top: 30px;
-      cursor: pointer;
     }
 
     #submit:disabled {
@@ -109,22 +112,15 @@
     }
 
     #bayar {
-      width: 100%;
-      padding: 15px;
       margin-top: 20px;
       background-color: #4caf50;
       color: white;
-      border: none;
-      font-size: 18px;
-      border-radius: 8px;
-      cursor: pointer;
     }
 
     #bayar:hover {
       background-color: #45a049;
     }
 
-    /* Modal styles */
     .modal {
       display: none;
       position: fixed;
@@ -184,7 +180,7 @@
 <body>
   <h1>Gorengan Bang Bewok</h1>
 
-  <input type="text" id="nama" placeholder="Masukkan nama kamu" pattern="[A-Za-z\\s]+" title="Hanya huruf dan spasi saja" required />
+  <input type="text" id="nama" placeholder="Masukkan nama kamu" pattern="[A-Za-z\s]+" title="Hanya huruf dan spasi saja" required />
 
   <div id="gorengan-list"></div>
 
@@ -196,6 +192,16 @@
     <div class="modal-content">
       <span class="modal-close" id="modal-close">&times;</span>
       <img src="https://raw.githubusercontent.com/RisyadTama/pesenan-gorengan/main/WhatsApp%20Image%202025-07-24%20at%2013.44.50.jpeg" alt="Bayar Disini" />
+    </div>
+  </div>
+
+  <!-- Modal Konfirmasi -->
+  <div class="modal" id="modal-konfirmasi">
+    <div class="modal-content" style="background: white; padding: 20px; border-radius: 10px; max-width: 400px; width: 90%; text-align: center; position: relative;">
+      <span class="modal-close" id="konfirmasi-close">&times;</span>
+      <h3>Konfirmasi Pesanan</h3>
+      <div id="konfirmasi-detail" style="text-align: left; margin-top: 15px; max-height: 300px; overflow-y: auto; white-space: pre-wrap;"></div>
+      <button id="konfirmasi-pesan" style="margin-top: 20px; padding: 10px 20px; background: #f57c00; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">Konfirmasi Pesanan</button>
     </div>
   </div>
 
@@ -264,41 +270,63 @@
       }
 
       let totalBelanja = 0;
+      let pesanan = {};
+      let detailPesanan = "";
 
-      const pesanan = dataGorengan.map(item => {
+      dataGorengan.forEach(item => {
         const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
-        totalBelanja += qty * hargaGorengan[item.nama];
-        return { [item.nama]: qty };
-      }).reduce((acc, cur) => Object.assign(acc, cur), {});
-
-      const dataToSend = {
-        data: [
-          Object.assign(
-            { Timestamp: new Date().toLocaleString(), Nama: nama, total_belanja: totalBelanja },
-            pesanan
-          )
-        ]
-      };
-
-      fetch(SHEETDB_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(dataToSend)
-      })
-      .then(res => res.json())
-      .then(response => {
-        alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
-        location.reload();
-      })
-      .catch(err => {
-        alert("Gagal mengirim pesanan.");
-        console.error(err);
+        if (qty > 0) {
+          pesanan[item.nama] = qty;
+          totalBelanja += qty * hargaGorengan[item.nama];
+          detailPesanan += `${item.nama}: ${qty} x Rp ${hargaGorengan[item.nama].toLocaleString()} = Rp ${(qty * hargaGorengan[item.nama]).toLocaleString()}\n`;
+        }
       });
+
+      if (totalBelanja === 0) {
+        alert("Belum ada pesanan yang dipilih.");
+        return;
+      }
+
+      document.getElementById("konfirmasi-detail").innerText = `Nama: ${nama}\n\n${detailPesanan}\nTotal: Rp ${totalBelanja.toLocaleString()}`;
+      document.getElementById("modal-konfirmasi").style.display = "flex";
+
+      document.getElementById("konfirmasi-pesan").onclick = function() {
+        const dataToSend = {
+          data: [
+            Object.assign(
+              { Timestamp: new Date().toLocaleString(), Nama: nama, total_belanja: totalBelanja },
+              pesanan
+            )
+          ]
+        };
+
+        fetch(SHEETDB_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dataToSend)
+        })
+        .then(res => res.json())
+        .then(response => {
+          alert(`Pesanan berhasil dikirim!\nTotal belanja: Rp ${totalBelanja.toLocaleString()}`);
+          location.reload();
+        })
+        .catch(err => {
+          alert("Gagal mengirim pesanan. Coba ulangi.");
+          console.error(err);
+        });
+      }
     });
 
-    // Modal Bayar control
+    document.getElementById("konfirmasi-close").onclick = function() {
+      document.getElementById("modal-konfirmasi").style.display = "none";
+    }
+
+    window.addEventListener("click", (e) => {
+      if (e.target === document.getElementById("modal-konfirmasi")) {
+        document.getElementById("modal-konfirmasi").style.display = "none";
+      }
+    });
+
     const modal = document.getElementById('modal');
     const modalCloseBtn = document.getElementById('modal-close');
     const bayarBtn = document.getElementById('bayar');
@@ -311,14 +339,12 @@
       modal.style.display = 'none';
     });
 
-    // Close modal by clicking outside content
     window.addEventListener('click', (e) => {
       if (e.target === modal) {
         modal.style.display = 'none';
       }
     });
 
-    // Jam operasional (misal tutup jam 22:00 sampai 06:00)
     function cekJamOperasional() {
       const now = new Date();
       const jam = now.getHours();
