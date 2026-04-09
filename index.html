@@ -179,6 +179,25 @@
     </div>
   </div>
 
+  <!-- ✅ Modal Info Kenaikan Harga -->
+  <div class="modal" id="modal-info" style="display:flex;">
+    <div class="modal-content" style="background: white; padding: 20px; border-radius: 10px; max-width: 400px; width: 90%; text-align: center; position: relative;">
+      <span class="modal-close" id="info-close">&times;</span>
+      <h3>📢 Informasi Penting</h3>
+      <div style="text-align: left; margin-top: 15px; line-height: 1.6;">
+        <b>Dear Our Rich Customers! ❤️</b><br><br>
+        Dikarenakan beberapa kebutuhan bahan baku gorengan terkena dampak kenaikan harga, maka dengan berat hati diinformasikan bahwa per tanggal 9 April 2026 hingga seterusnya, seluruh item Gorengan Bang Bewok naik 500 rupiah dari harga sebelumnya.<br><br>
+        
+        Tapi jangan khawatir, rasa dan ukuran tidak akan berubah kok 😊<br><br>
+        
+        Sekian informasi kami sampaikan,<br><br>
+        
+        Salam Hangat.<br>
+        Bang Bewok and Family
+      </div>
+    </div>
+  </div>
+
   <script>
     const SHEETDB_API_URL = "https://sheetdb.io/api/v1/ufd622z3qnc2c";
     const dataGorengan = [
@@ -225,76 +244,14 @@
       input.value = value;
     }
 
-    // Membesarkan gambar saat diklik
-    document.querySelectorAll("#gorengan-list img").forEach(img => {
-      img.addEventListener("click", () => {
-        const modal = document.createElement("div");
-        modal.className = "modal";
-        modal.style.display = "flex";
-        modal.innerHTML = `
-          <div class="modal-content">
-            <span class="modal-close">&times;</span>
-            <img src="${img.src}" alt="${img.alt}" style="max-width: 90vw; max-height: 90vh; border-radius: 10px; display: block;" />
-          </div>
-        `;
-        document.body.appendChild(modal);
-        modal.querySelector(".modal-close").onclick = () => modal.remove();
-        modal.addEventListener("click", (e) => { if (e.target === modal) modal.remove(); });
-      });
-    });
-
-    let isSubmitting = false;
-    document.getElementById("submit").addEventListener("click", () => {
-      if (isSubmitting) return;
-      const nama = document.getElementById("nama").value.trim();
-      if (!nama) { alert("Nama wajib diisi"); return; }
-      let totalBelanja = 0, pesanan = {}, detailPesanan = "";
-      dataGorengan.forEach(item => {
-        const qty = parseInt(document.getElementById(`qty-${item.nama}`).value) || 0;
-        if (qty > 0) {
-          pesanan[item.nama] = qty;
-          totalBelanja += qty * hargaGorengan[item.nama];
-          detailPesanan += `${item.nama}: ${qty} x Rp ${hargaGorengan[item.nama].toLocaleString()} = Rp ${(qty * hargaGorengan[item.nama]).toLocaleString()}\n`;
-        }
-      });
-      if (totalBelanja === 0) { alert("Belum ada pesanan yang dipilih."); return; }
-      document.getElementById("konfirmasi-detail").innerText = `Nama: ${nama}\n\n${detailPesanan}\nTotal: Rp ${totalBelanja.toLocaleString()}`;
-      document.getElementById("modal-konfirmasi").style.display = "flex";
-      document.getElementById("konfirmasi-pesan").onclick = function() {
-        if (isSubmitting) return;
-        isSubmitting = true;
-        this.disabled = true;
-        this.innerText = "Mengirim...";
-        const dataToSend = { data: [ Object.assign({ Timestamp: new Date().toLocaleString(), Nama: nama, total_belanja: totalBelanja }, pesanan) ] };
-        fetch(SHEETDB_API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(dataToSend) })
-        .then(res => res.json())
-        .then(response => { alert(`Pesanan berhasil dikirim! Total belanja: Rp ${totalBelanja.toLocaleString()}`); location.reload(); })
-        .catch(err => {
-          alert("Gagal mengirim pesanan. Coba ulangi.");
-          console.error(err);
-          isSubmitting = false;
-          document.getElementById("konfirmasi-pesan").disabled = false;
-          document.getElementById("konfirmasi-pesan").innerText = "Konfirmasi Pesanan";
-        });
+    document.getElementById("info-close").onclick = () => {
+      document.getElementById("modal-info").style.display = "none";
+    };
+    window.addEventListener("click", (e) => {
+      if (e.target === document.getElementById("modal-info")) {
+        document.getElementById("modal-info").style.display = "none";
       }
     });
-
-    document.getElementById("konfirmasi-close").onclick = () => document.getElementById("modal-konfirmasi").style.display = "none";
-    window.addEventListener("click", (e) => { if (e.target === document.getElementById("modal-konfirmasi")) document.getElementById("modal-konfirmasi").style.display = "none"; });
-    document.getElementById("bayar").addEventListener('click', () => document.getElementById('modal').style.display = 'flex');
-    document.getElementById('modal-close').addEventListener('click', () => document.getElementById('modal').style.display = 'none');
-    window.addEventListener('click', (e) => { if (e.target === document.getElementById('modal')) document.getElementById('modal').style.display = 'none'; });
-    function cekJamOperasional() {
-      const jam = new Date().getHours();
-      if (jam >= 22 || jam < 6) {
-        document.getElementById('nama').disabled = true;
-        document.getElementById('submit').disabled = true;
-        document.getElementById('submit').innerText = 'Tutup, buka jam 06:00 pagi';
-        document.querySelectorAll('input[type=number]').forEach(input => input.disabled = true);
-        document.querySelectorAll('.item-controls button').forEach(btn => btn.disabled = true);
-      }
-    }
-    cekJamOperasional();
   </script>
 </body>
 </html>
